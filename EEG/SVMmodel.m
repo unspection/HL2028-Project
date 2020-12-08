@@ -46,7 +46,6 @@ for R = 1:5 %5 recordings
     
     %Variables for the confusion matrix
     l_data = height(testingData);
-%     known = testingData(:,19); %for ECG
     known = testingData(:,12); %for EEG
     known = [known; zeros(370-l_data, 1)];
     knownStages(:,R) = known;
