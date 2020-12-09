@@ -1,41 +1,32 @@
 %% Load signals
-clc;
-clear all;
-
-edfFilename = 'R1.edf';
-[~, record1] = edfread(edfFilename);
-edfFilename = 'R2.edf';
-[~, record2] = edfread(edfFilename);
-edfFilename = 'R3.edf';
-[~, record3] = edfread(edfFilename);
-edfFilename = 'R4.edf';
-[~, record4] = edfread(edfFilename);
-edfFilename = 'R5.edf';
-[~, record5] = edfread(edfFilename);
-
-%%
-Fs = 125; % Sampling frequency, Hz 
-EEG = record1(8, 1:length(record1));
-EEG2 = record2(8, 1:length(record2));
-EEG3 = record3(8, 1:length(record3));
-EEG4 = record4(8, 1:length(record4));
-EEG5 = record5(8, 1:length(record5));
+% clc;
+% clear all;
+% 
+% edfFilename = 'R1.edf';
+% [~, record1] = edfread(edfFilename);
+% edfFilename = 'R2.edf';
+% [~, record2] = edfread(edfFilename);
+% edfFilename = 'R3.edf';
+% [~, record3] = edfread(edfFilename);
+% edfFilename = 'R4.edf';
+% [~, record4] = edfread(edfFilename);
+% edfFilename = 'R5.edf';
+% [~, record5] = edfread(edfFilename);
+% 
+% EEG = record1(8, 1:length(record1));
+% EEG2 = record2(8, 1:length(record2));
+% EEG3 = record3(8, 1:length(record3));
+% EEG4 = record4(8, 1:length(record4));
+% EEG5 = record5(8, 1:length(record5));
 
 
-%% Design a Bandpass Filter for Pre-rpocessing
-% Butter filter
-lowEnd = 2; % Hz
-highEnd = 50; % Hz
-filterOrder = 2; 
-[b, a] = butter(filterOrder, [lowEnd highEnd]/(Fs/2)); % Generate filter coefficients
+%% Pre-rpocessing
+filtered_EEG1 = preprocess_EEG(EEG);
+filtered_EEG2 = preprocess_EEG(EEG2);
+filtered_EEG3 = preprocess_EEG(EEG3);
+filtered_EEG4 = preprocess_EEG(EEG4);
+filtered_EEG5 = preprocess_EEG(EEG5);
 
-
-%% Apply filter to signal
-filtered_EEG1 = filtfilt(b, a, EEG); 
-filtered_EEG2 = filtfilt(b, a, EEG2);
-filtered_EEG3 = filtfilt(b, a, EEG3);
-filtered_EEG4 = filtfilt(b, a, EEG4);
-filtered_EEG5 = filtfilt(b, a, EEG5);
 
 %% ---- DISCRETE WAVELET TRANSFORM --------
 %(5 level wavelet db2)
@@ -65,12 +56,12 @@ NEWfeatures = [NEWfeatures1;NEWfeatures2;NEWfeatures3;NEWfeatures4;NEWfeatures5]
 NEWfeatures_norm = normalize(NEWfeatures); %normalize features
 
 %% Save features as mat files
-% save('NormFeaturesEEG.mat', 'NEWfeatures_norm');
-% save('FeaturesEEG.mat', 'NEWfeatures');
+save('NormFeaturesEEG.mat', 'NEWfeatures_norm');
+save('FeaturesEEG.mat', 'NEWfeatures');
 
 %% Save features as xlsx files
-% saveFeaturesEEG(NEWfeatures_norm, 'NormFeaturesEEG.xlsx');
-% saveFeaturesEEG(NEWfeatures, 'FeaturesEEG.xlsx');
+saveFeaturesEEG(NEWfeatures_norm, 'NormFeaturesEEG.xlsx');
+saveFeaturesEEG(NEWfeatures, 'FeaturesEEG.xlsx');
 
 %% Load features
 normFeatures = load('NormFeaturesEEG.mat');
@@ -98,35 +89,35 @@ stages_R5 = stages_R5';
 stages = [stages_R1; stages_R2; stages_R3; stages_R4; stages_R5];
 
 %% SVM model
-[knownStages, predictions_test, testAcc, trainAcc] = SVMmodel(normFeatures, stages, nSamples, 'linear', 'SVM_result_EEG.xlsx');
+[knownStages, predictions_test, testAcc, trainAcc] = SVMmodelEEG(normFeatures, stages, nSamples, 'polynomial', 'SVM_result_EEG.xlsx');
 
 %% Hypnogram ground truth R1
 %[events, stages, epochLength,annotation] = readXML('R1.xml');
-figure(2);
-%stages = stages(1:8000);
-plot(((1:length(stages_R1))*30)/60,stages_R1); %sleep stages are for 30 seconds epochs
-ylim([0 6]);
-set(gca,'ytick',[0:6],'yticklabel',{'REM','','N3','N2','N1','Wake',''});
-xlabel('Time (Minutes)');ylabel('Sleep Stage');box off;title('Hypnogram');
-set(gcf,'color','w');
+% figure(2);
+% %stages = stages(1:8000);
+% plot(((1:length(stages_R1))*30)/60,stages_R1); %sleep stages are for 30 seconds epochs
+% ylim([0 6]);
+% set(gca,'ytick',[0:6],'yticklabel',{'REM','','N3','N2','N1','Wake',''});
+% xlabel('Time (Minutes)');ylabel('Sleep Stage');box off;title('Hypnogram');
+% set(gcf,'color','w');
 
 %% Hypnogram ground truth R2
 %[events, stages2, epochLength,annotation] = readXML('R2.xml');
-figure(2);
-plot(((1:length(stages_R2))*30)/60,stages_R2); %sleep stages are for 30 seconds epochs
-ylim([0 6]);
-set(gca,'ytick',[0:6],'yticklabel',{'REM','','N3','N2','N1','Wake',''});
-xlabel('Time (Minutes)');ylabel('Sleep Stage');box off;title('Hypnogram');
-set(gcf,'color','w');
+% figure(2);
+% plot(((1:length(stages_R2))*30)/60,stages_R2); %sleep stages are for 30 seconds epochs
+% ylim([0 6]);
+% set(gca,'ytick',[0:6],'yticklabel',{'REM','','N3','N2','N1','Wake',''});
+% xlabel('Time (Minutes)');ylabel('Sleep Stage');box off;title('Hypnogram');
+% set(gcf,'color','w');
 
 
 %% 
-figure(3);
-plot(((1:length(predictedStages(:,2)))*30)/60,predictedStages(:,2)); %sleep stages are for 30 seconds epochs
-ylim([0 6]);
-set(gca,'ytick',[0:6],'yticklabel',{'REM','','N3','N2','N1','Wake',''});
-xlabel('Time (Minutes)');ylabel('Sleep Stage');box off;title('Hypnogram');
-set(gcf,'color','w');
+% figure(3);
+% plot(((1:length(predictedStages(:,2)))*30)/60,predictedStages(:,2)); %sleep stages are for 30 seconds epochs
+% ylim([0 6]);
+% set(gca,'ytick',[0:6],'yticklabel',{'REM','','N3','N2','N1','Wake',''});
+% xlabel('Time (Minutes)');ylabel('Sleep Stage');box off;title('Hypnogram');
+% set(gcf,'color','w');
 
 % figure(4);
 % plot(((1:length(knownStages(:,2)))*30)/60,knownStages(:,2)); %sleep stages are for 30 seconds epochs
