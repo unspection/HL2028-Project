@@ -17,7 +17,7 @@ function SVMModels = trainSVM(feature, target, kernel)
 %      (Cell size: totalClass * (totalClass - 1) / 2)
 
     if nargin == 2
-        kernel = 'linear';
+        kernel = 'polynomial';
     end
     
     t = templateSVM('KernelFunction', kernel);
