@@ -15,15 +15,27 @@ for i = 1:nSamples
     
     %Frequency domain
     %Square of the Power Spectrum
-    s = sum(alpha(i,:));
-    NEWfeatures(i, 7) = s.^2; 
-    s = sum(beta(i,:));
-    NEWfeatures(i, 8) = s.^2;
-    s = sum(theta(i,:));
-    NEWfeatures(i, 9) = s.^2;
-    s = sum(delta(i,:));
-    NEWfeatures(i, 10) = s.^2;
-    s = sum(gamma(i,:));
-    NEWfeatures(i, 11) = s.^2;
+    s = sum(alpha(i,:).^2);
+    NEWfeatures(i, 7) = (s/length(alpha)).^2; 
+    s = sum(beta(i,:).^2);
+    NEWfeatures(i, 8) = (s/length(beta)).^2;
+    s = sum(theta(i,:).^2);
+    NEWfeatures(i, 9) = (s/length(theta)).^2;
+    s = sum(delta(i,:).^2);
+    NEWfeatures(i, 10) = (s/length(delta)).^2;
+    s = sum(gamma(i,:).^2);
+    NEWfeatures(i, 11) = (s/length(gamma)).^2;
+    
+%     s = sum(alpha(i,:));
+%     NEWfeatures(i, 7) = s.^2; 
+%     s = sum(beta(i,:));
+%     NEWfeatures(i, 8) = s.^2;
+%     s = sum(theta(i,:));
+%     NEWfeatures(i, 9) = s.^2;
+%     s = sum(delta(i,:));
+%     NEWfeatures(i, 10) = s.^2;
+%     s = sum(gamma(i,:));
+%     NEWfeatures(i, 11) = s.^2;
+
     
 end
