@@ -1,4 +1,4 @@
-function [knownStages, predictedStages, testAcc, trainAcc] = new_SVMmodel(hrv, stages, kernel, fileName)
+function [knownStages, predictedStages] = new_SVMmodel(hrv, stages, kernel, fileName)
 
 %Create xlsx file for the result
 writecell({'Training accuracy', 'Testing accuracy'} ,fileName);
