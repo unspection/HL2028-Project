@@ -8,7 +8,7 @@ predictions_test = zeros(350, 10);
 knownStages = zeros(370, 10);
 testingDataSave = zeros(350, 10);
     
-for R = 1:10 %5 recordings
+for R = 1:10 %10 recordings
     features = [hrv stages(:, 1)]; %add stages next to hrv features
     features = features(getindexrange(nSamples, R), :); %get features belonging to R
  
