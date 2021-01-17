@@ -1,7 +1,7 @@
 function EOGfeatures = extractFeaturesEOG2(eogsignalleft,rawleft,eogsignalright,rawright,delta)
 
 nSamples = size(eogsignalleft, 1);
-EOGfeatures= zeros(nSamples,21);
+EOGfeatures= zeros(nSamples,19);
 
 for i = 1:nSamples
    
